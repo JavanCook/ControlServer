@@ -1,24 +1,44 @@
+#Import socket and time
 import socket
+from time import gmtime, strftime
 
-BIND_IP = '192.168.1.70'
-BIND_PORT = 9235
-CONNECT_IP = '192.168.1.66'
-CONNECT_PORT = 9234
-BUFFER_SIZE = 70
+#Define control values
+lshoulder = [0, b'1,']
+rshouldr = [0, b'2,']
+start = [b'16,', 0]
+back = [b'32,', 0]
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((BIND_IP, BIND_PORT))
-#s.connect((CONNECT_IP, CONNECT_PORT))
-s.listen(1)
+#Allows multiple connects/disconnects
+while True:
+ #Setup TCP server
+ bindIP = '192.168.1.70'
+ bindport = 9235
+ connectIP = '192.168.1.66'
+ connectport = 9234
+ packetsize = 70
+ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ s.bind((bindIP, bindport))
+ #s.connect((connectIP, connectport))
+ s.listen(1)
 
-conn, addr = s.accept()
-print('Connection address:', addr)
-while 1:
- data = conn.recv(BUFFER_SIZE)
- if not data: break
- print('recieved data:', data.decode())
- list = data.split()
- print(list)
- conn.send(data)
-#conn.close
-#s.close()
+ #Receive and acknowledge remote connection
+ conn, addr = s.accept()
+ print(addr , 'connected', strftime("%a, %d, %b %Y %H:%M:%S", gmtime()))
+ ackn = conn.recv(packetsize)
+ conn.send(ackn)
+
+ #Control input loop
+ while True:
+  try:
+   data = conn.recv(packetsize)
+   conn.send(data)
+   #Translate into callable list
+   decoded = data.decode()
+   listed = data.split()
+   if listed[0] == start[0]:
+    print('Pressed start')
+  #Handles shutdown by peer error
+  except socket.error as e:
+   if e.errno == 104:
+    print(addr , 'disconnected', strftime("%a, %d, %b %Y %H:%M:%S", gmtime()))
+    break
