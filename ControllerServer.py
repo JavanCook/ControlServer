@@ -1,12 +1,10 @@
 #Import socket and time
 import socket
+import itertools
 from time import gmtime, strftime
 
-#Define control values
-lshoulder = [0, b'1,']
-rshouldr = [0, b'2,']
-start = [b'16,', 0]
-back = [b'32,', 0]
+#Create control binaries
+binaries = list(itertools.product(range(2), repeat = 8))
 
 #Allows multiple connects/disconnects
 while True:
@@ -34,9 +32,21 @@ while True:
    conn.send(data)
    #Translate into callable list
    decoded = data.decode()
+   print(decoded)
    listed = data.split()
-   if listed[0] == start[0]:
-    print('Pressed start')
+   #for x in range(1,257):
+    #Start, back, d-pad and analogue clicks
+    #if listed[0].decode() == str(x):
+     #print(binaries[x])
+    #Xbox button, shoulder buttons, A, B, X and Y
+    #if listed[1].decode() == str(x):
+     #print(binaries[x])
+   #Left trigger
+   #if int(listed[2].decode()) >= 150:
+    #print('left trigger') 
+   #Right trigger
+   #if int(listed[3].decode()) >= 150:
+    #print('right trigger')
   #Handles shutdown by peer error
   except socket.error as e:
    if e.errno == 104:
