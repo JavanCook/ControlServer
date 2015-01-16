@@ -4,32 +4,46 @@ import itertools
 import RPi.GPIO as GPIO
 from time import gmtime, strftime
 
+#Create control binaries
+binaries = list(itertools.product(range(2), repeat = 8))
+
 #Setup GPIO and control values
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 lsb = 7
-rsb = 12
-xbb = 11
+rsb = 11
+xbb = 12
 bl = 13
 Ab = 35
 Bb = 36
 Xb = 37
 Yb = 38
 du = 7
-dd = 12
-dl = 11
+dd = 11
+dl = 12
 dr = 13
 st = 35
 ba = 36
 las = 37
 ras = 38
-rtr = 36
-ltr = 11
+rtr1 = 35
+rtr2 = 36
+ltr1 = 11
+ltr2 = 12
+lasl = 7
+lasr = 11
+lasu = 12
+lasd = 13
+rasl = 7
+rasr = 11
+rasu = 12
+rasd = 13
 buttonset1 = (ras, las, ba, st, dr, dl, dd, du)
 buttonset2 = (Yb, Xb, Bb, Ab, bl, xbb, rsb, lsb)
-
-#Create control binaries
-binaries = list(itertools.product(range(2), repeat = 8))
+lefttrigger = (ltr1, ltr2)
+righttrigger = (rtr1, rtr2)
+leftanalogue = (lasl, lasr, lasu, lasd)
+rightanalogue = (rasl, rasr, rasu, rasd)
 
 #Allows multiple connects/disconnects
 while True:
@@ -62,28 +76,44 @@ while True:
     #Start, back, d-pad and analogue clicks
     #if listed[0].decode() == str(x):
      #GPIO.setup(buttonset1, GPIO.OUT)
-     #GPIO.output(buttonset1, binaries[x])
+     #GPIO.output(buttonset1, binaries[255-x])
     #Xbox button, shoulder buttons, A, B, X and Y
     #if listed[1].decode() == str(x):
      #GPIO.setup(buttonset2, GPIO.OUT)
-     #GPIO.output(buttonset2, binaries[x])
+     #GPIO.output(buttonset2, binaries[255-x])
    #Left trigger
-   if int(listed[2].decode()) >= 150:
-    GPIO.setup(ltr, GPIO.OUT)
-    GPIO.output(ltr, 1)
-   else:
-    GPIO.setup(ltr, GPIO.OUT)
-    GPIO.output(ltr, 0)
+   #GPIO.setup(lefttrigger, GPIO.OUT)
+   #GPIO.output(lefttrigger, 1)
+   #if int(listed[2].decode()) >= 150:
+    #GPIO.output(lefttrigger, 0)
    #Right trigger
-   if int(listed[3].decode()) >= 150:
-    GPIO.setup(rtr, GPIO.OUT)
-    GPIO.output(rtr, 1)
-   else:
-    GPIO.setup(rtr, GPIO.OUT)
-    GPIO.output(rtr, 0)
+   #GPIO.setup(righttrigger, GPIO.OUT)
+   #GPIO.output(righttrigger, 1)
+   #if int(listed[3].decode()) >= 150:
+    #GPIO.output(righttrigger, 0)
    #Left analogue stick
+   #GPIO.setup(leftanalogue, GPIO.OUT)
+   #GPIO.output(leftanalogue, 1)
+   #if int(listed[4].decode()) >= 225:
+    #GPIO.output((lasl, lasr), (0,1))
+   #if int(listed[4].decode()) <= 25:
+    #GPIO.output((lasl, lasr), (0,0))
+   #if int(listed[6].decode()) >= 225:
+    #GPIO.output((lasu, lasd), (0,1))
+   #if int(listed[6].decode()) <= 25:
+    #GPIO.output((lasu, lasd), (0,0))
    #Right analogue stick
-  #Handles shutdown by peer error
+   #GPIO.setup(rightanalogue, GPIO.OUT)
+   #GPIO.output(rightanalogue, 1)
+   #if int(listed[4].decode()) >= 225:
+    #GPIO.output((rasl, rasr), (0,1))
+   #if int(listed[4].decode()) <= 25:
+    #GPIO.output((rasl, rasr), (0,0))
+   #if int(listed[6].decode()) >= 225:
+    #GPIO.output((rasu, rasd), (0,1))
+   #if int(listed[6].decode()) <= 25:
+    #GPIO.output((rasu, rasd), (0,0))
+  #Handles disconnect by peer error
   except socket.error as e:
    if e.errno == 104:
     GPIO.cleanup()
