@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 from time import gmtime, strftime
 
 #Create control binaries
-binaries = list(itertools.product(range(2), repeat = 8))
+binaries1 = list(itertools.product(range(2), repeat = 8))
 
 #Setup GPIO and control values
 GPIO.setwarnings(False)
@@ -34,10 +34,10 @@ lasl = 7
 lasr = 11
 lasu = 12
 lasd = 13
-rasl = 7
-rasr = 11
-rasu = 12
-rasd = 13
+rasl = 35
+rasr = 36
+rasu = 37
+rasd = 38
 buttonset1 = (ras, las, ba, st, dr, dl, dd, du)
 buttonset2 = (Yb, Xb, Bb, Ab, bl, xbb, rsb, lsb)
 lefttrigger = (ltr1, ltr2)
@@ -72,47 +72,48 @@ while True:
    #Translate into callable list
    decoded = data.decode()
    listed = data.split()
-   #for x in range(0,256):
-    #Start, back, d-pad and analogue clicks
-    #if listed[0].decode() == str(x):
-     #GPIO.setup(buttonset1, GPIO.OUT)
-     #GPIO.output(buttonset1, binaries[255-x])
-    #Xbox button, shoulder buttons, A, B, X and Y
-    #if listed[1].decode() == str(x):
-     #GPIO.setup(buttonset2, GPIO.OUT)
-     #GPIO.output(buttonset2, binaries[255-x])
-   #Left trigger
-   #GPIO.setup(lefttrigger, GPIO.OUT)
-   #GPIO.output(lefttrigger, 1)
-   #if int(listed[2].decode()) >= 150:
-    #GPIO.output(lefttrigger, 0)
-   #Right trigger
-   #GPIO.setup(righttrigger, GPIO.OUT)
-   #GPIO.output(righttrigger, 1)
-   #if int(listed[3].decode()) >= 150:
-    #GPIO.output(righttrigger, 0)
-   #Left analogue stick
-   #GPIO.setup(leftanalogue, GPIO.OUT)
-   #GPIO.output(leftanalogue, 1)
-   #if int(listed[4].decode()) >= 225:
-    #GPIO.output((lasl, lasr), (0,1))
-   #if int(listed[4].decode()) <= 25:
-    #GPIO.output((lasl, lasr), (0,0))
-   #if int(listed[6].decode()) >= 225:
-    #GPIO.output((lasu, lasd), (0,1))
-   #if int(listed[6].decode()) <= 25:
-    #GPIO.output((lasu, lasd), (0,0))
-   #Right analogue stick
-   #GPIO.setup(rightanalogue, GPIO.OUT)
-   #GPIO.output(rightanalogue, 1)
-   #if int(listed[4].decode()) >= 225:
-    #GPIO.output((rasl, rasr), (0,1))
-   #if int(listed[4].decode()) <= 25:
-    #GPIO.output((rasl, rasr), (0,0))
-   #if int(listed[6].decode()) >= 225:
-    #GPIO.output((rasu, rasd), (0,1))
-   #if int(listed[6].decode()) <= 25:
-    #GPIO.output((rasu, rasd), (0,0))
+   if len(listed) == 8:
+    #for x in range(0,256):
+     #Start, back, d-pad and analogue clicks
+     #if listed[0].decode() == str(x):
+      #GPIO.setup(buttonset1, GPIO.OUT)
+      #GPIO.output(buttonset1, binaries[255-x])
+     #Xbox button, shoulder buttons, A, B, X and Y
+     #if listed[1].decode() == str(x):
+      #GPIO.setup(buttonset2, GPIO.OUT)
+      #GPIO.output(buttonset2, binaries[255-x])
+    #Left trigger
+    #GPIO.setup(lefttrigger, GPIO.OUT)
+    #GPIO.output(lefttrigger, 1)
+    #if int(listed[2].decode()) >= 150:
+     #GPIO.output(lefttrigger, 0)
+    #Right trigger
+    #GPIO.setup(righttrigger, GPIO.OUT)
+    #GPIO.output(righttrigger, 1)
+    #if int(listed[3].decode()) >= 150:
+     #GPIO.output(righttrigger, 0)
+    #Left analogue stick
+    GPIO.setup(leftanalogue, GPIO.OUT)
+    GPIO.output(leftanalogue, 1)
+    if int(listed[4].decode()) >= 65000:
+     GPIO.output((lasl, lasr), (0,1))
+    if int(listed[4].decode()) <= 500:
+     GPIO.output((lasl, lasr), (1,0))
+    if int(listed[5].decode()) >= 65000:
+     GPIO.output((lasu, lasd), (0,1))
+    if int(listed[5].decode()) <= 500:
+     GPIO.output((lasu, lasd), (1,0))
+    #Right analogue stick
+    GPIO.setup(rightanalogue, GPIO.OUT)
+    GPIO.output(rightanalogue, 1)
+    if int(listed[6].decode()) >= 65000:
+     GPIO.output((rasl, rasr), (0,1))
+    if int(listed[6].decode()) <= 500:
+     GPIO.output((rasl, rasr), (1,0))
+    if int(listed[7].decode()) >= 65000:
+     GPIO.output((rasu, rasd), (0,1))
+    if int(listed[7].decode()) <= 500:
+     GPIO.output((rasu, rasd), (1,0))
   #Handles disconnect by peer error
   except socket.error as e:
    if e.errno == 104:
